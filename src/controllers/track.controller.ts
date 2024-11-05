@@ -9,7 +9,7 @@ import {
   Put,
 } from '@nestjs/common';
 import { IdDto } from '../dto/common.dto';
-import { CreateTrackDto, ArtistDto, UpdateTrackDto } from '../dto/artistDto';
+import { CreateTrackDto, TrackDto, UpdateTrackDto } from '../dto/track.dto';
 import { TrackService } from '../services/track.service';
 import { MessageHelper } from '../helpers/message.helper';
 
@@ -23,7 +23,7 @@ export class TrackController {
   }
 
   @Get(':id')
-  async get(@Param() { id }: IdDto): Promise<ArtistDto> {
+  async get(@Param() { id }: IdDto): Promise<TrackDto> {
     return this.trackService.get(id);
   }
 
@@ -36,7 +36,7 @@ export class TrackController {
   update(
     @Param() { id }: IdDto,
     @Body() body: UpdateTrackDto,
-  ): Promise<ArtistDto> {
+  ): Promise<TrackDto> {
     return this.trackService.update(id, body);
   }
 
