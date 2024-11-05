@@ -19,7 +19,7 @@ export class CreateTrackDto {
   duration?: number;
 }
 
-export class TrackDto extends CreateTrackDto {
+export class ArtistDto extends CreateTrackDto {
   @IsUUID()
   id: string;
 }

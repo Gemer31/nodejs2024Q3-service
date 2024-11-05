@@ -1,8 +1,16 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put } from "@nestjs/common";
-import { UpdatePasswordDto } from "../dto/user.dto";
-import { IdDto } from "../dto/common.dto";
-import { CreateTrackDto, TrackDto, UpdateTrackDto } from "../dto/track.dto";
-import { TrackService } from "../services/track.service";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { IdDto } from '../dto/common.dto';
+import { CreateTrackDto, ArtistDto, UpdateTrackDto } from '../dto/artistDto';
+import { TrackService } from '../services/track.service';
 import { MessageHelper } from '../helpers/message.helper';
 
 @Controller('track')
@@ -15,7 +23,7 @@ export class TrackController {
   }
 
   @Get(':id')
-  async get(@Param() { id }: IdDto): Promise<TrackDto> {
+  async get(@Param() { id }: IdDto): Promise<ArtistDto> {
     return this.trackService.get(id);
   }
 
@@ -28,7 +36,7 @@ export class TrackController {
   update(
     @Param() { id }: IdDto,
     @Body() body: UpdateTrackDto,
-  ): Promise<TrackDto> {
+  ): Promise<ArtistDto> {
     return this.trackService.update(id, body);
   }
 
