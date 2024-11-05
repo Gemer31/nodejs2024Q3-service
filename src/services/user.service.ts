@@ -10,11 +10,11 @@ import { CreateUserDto, UpdatePasswordDto, User } from '../dto/user.dto';
 export class UserService {
   private users: Map<string, User> = new Map();
 
-  public async getUsers(): Promise<User[]> {
+  public async getAll(): Promise<User[]> {
     return [...this.users.values()];
   }
 
-  public async getUser(id: string): Promise<User> {
+  public async get(id: string): Promise<User> {
     const user: User = this.users.get(id);
     if (!user) {
       throw new NotFoundException(`User with id=${id} is not found`);
@@ -41,7 +41,7 @@ export class UserService {
     id: string,
     { oldPassword, newPassword }: UpdatePasswordDto,
   ): Promise<User> {
-    const user = await this.getUser(id);
+    const user = await this.get(id);
 
     if (user.password !== oldPassword) {
       throw new ForbiddenException('Old password is incorrect');
@@ -52,7 +52,7 @@ export class UserService {
   }
 
   public async delete(id: string): Promise<void> {
-    const user = await this.getUser(id);
+    const user = await this.get(id);
     this.users.delete(user.id);
   }
 }

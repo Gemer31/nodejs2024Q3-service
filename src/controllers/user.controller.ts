@@ -18,12 +18,12 @@ export class UserController {
 
   @Get()
   getAll() {
-    return this.userService.getUsers();
+    return this.userService.getAll();
   }
 
   @Get(':id')
   async get(@Param() { id }: IdDto): Promise<User> {
-    return this.userService.getUser(id);
+    return this.userService.get(id);
   }
 
   @Post()
