@@ -9,7 +9,11 @@ import {
   Put,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
-import { CreateUserDto, UpdatePasswordDto, User } from '../dto/user.dto';
+import {
+  CreateUserDto,
+  UpdatePasswordDto,
+  UserResponseDto,
+} from '../dto/user.dto';
 import { IdDto } from '../dto/common.dto';
 
 @Controller('user')
@@ -22,20 +26,21 @@ export class UserController {
   }
 
   @Get(':id')
-  async get(@Param() { id }: IdDto): Promise<User> {
+  async get(@Param() { id }: IdDto): Promise<UserResponseDto> {
     return this.userService.get(id);
   }
 
   @Post()
-  create(@Body() body: CreateUserDto) {
+  create(@Body() body: CreateUserDto): Promise<UserResponseDto> {
     return this.userService.create(body);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param() { id }: IdDto,
     @Body() body: UpdatePasswordDto,
-  ): Promise<User> {
+  ): Promise<UserResponseDto> {
+    await this.userService.get(id);
     return this.userService.update(id, body);
   }
 

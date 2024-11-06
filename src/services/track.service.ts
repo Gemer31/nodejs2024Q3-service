@@ -14,7 +14,7 @@ export class TrackService {
   public async get(id: string): Promise<TrackDto> {
     const track: TrackDto = this.tracks.get(id);
     if (!track) {
-      throw new NotFoundException(MessageHelper.notFound('Track', id));
+      throw new NotFoundException(MessageHelper.entityNotFound('Track', id));
     }
     return this.tracks.get(id);
   }

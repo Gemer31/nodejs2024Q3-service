@@ -1,23 +1,18 @@
 import { IsNumber, IsString } from 'class-validator';
+import { IdDto } from './common.dto';
 
-export class User {
-  @IsString()
-  id: string; // uuid v4
-
+export class UserResponseDto extends IdDto {
   @IsString()
   login: string;
 
-  @IsString()
-  password: string;
+  @IsNumber()
+  version: number;
 
   @IsNumber()
-  version: number; // integer number, increments on update
+  createdAt: number;
 
   @IsNumber()
-  createdAt: number; // timestamp of creation
-
-  @IsNumber()
-  updatedAt: number; // timestamp of last update
+  updatedAt: number;
 }
 
 export class CreateUserDto {
@@ -30,8 +25,8 @@ export class CreateUserDto {
 
 export class UpdatePasswordDto {
   @IsString()
-  oldPassword: string; // previous password
+  oldPassword: string;
 
   @IsString()
-  newPassword: string; // new password
+  newPassword: string;
 }

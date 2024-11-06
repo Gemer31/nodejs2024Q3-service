@@ -14,7 +14,7 @@ export class ArtistService {
   public async get(id: string): Promise<ArtistDto> {
     const artist: ArtistDto = this.artists.get(id);
     if (!artist) {
-      throw new NotFoundException(MessageHelper.notFound('Artist', id));
+      throw new NotFoundException(MessageHelper.entityNotFound('Artist', id));
     }
     return this.artists.get(id);
   }
@@ -31,11 +31,12 @@ export class ArtistService {
 
   public async update(id: string, data: CreateArtistDto): Promise<ArtistDto> {
     const artist = await this.get(id);
-    this.artists.set(id, {
-      id,
+    const updateArtist: ArtistDto = {
+      ...artist,
       ...data,
-    });
-    return artist;
+    };
+    this.artists.set(id, updateArtist);
+    return updateArtist;
   }
 
   public async delete(id: string): Promise<void> {

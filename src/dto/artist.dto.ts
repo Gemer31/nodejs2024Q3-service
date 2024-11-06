@@ -1,9 +1,5 @@
 import { IsBoolean, IsString, IsUUID } from 'class-validator';
-
-export class ArtistDto {
-  @IsUUID()
-  id: string;
-}
+import { PartialType } from "@nestjs/mapped-types";
 
 export class CreateArtistDto {
   @IsString()
@@ -11,4 +7,11 @@ export class CreateArtistDto {
 
   @IsBoolean()
   grammy: boolean;
+}
+
+export class UpdateArtistDto extends PartialType(CreateArtistDto) {}
+
+export class ArtistDto extends CreateArtistDto {
+  @IsUUID()
+  id: string;
 }

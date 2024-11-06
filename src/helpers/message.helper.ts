@@ -3,7 +3,7 @@ export class MessageHelper {
     return `${entityName} deleted successfully`;
   };
 
-  static notFound = (entityName: string, id: string): string => {
+  static entityNotFound = (entityName: string, id: string): string => {
     return `${entityName} with id=${id} is not found`;
   };
 }
