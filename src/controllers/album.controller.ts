@@ -12,10 +12,14 @@ import { IdDto } from '../dto/common.dto';
 import { MessageHelper } from '../helpers/message.helper';
 import { AlbumService } from '../services/album.service';
 import { AlbumDto, CreateAlbumDto } from '../dto/album.dto';
+import { TrackService } from '../services/track.service';
 
 @Controller('album')
 export class AlbumController {
-  constructor(private albumService: AlbumService) {}
+  constructor(
+    private albumService: AlbumService,
+    private trackService: TrackService,
+  ) {}
 
   @Get()
   getAll() {
@@ -44,6 +48,7 @@ export class AlbumController {
   @HttpCode(204)
   async delete(@Param() { id }: IdDto): Promise<string> {
     await this.albumService.delete(id);
+    await this.trackService.removeAlbumFromTrack(id);
     return MessageHelper.deleteSuccessfully('Album');
   }
 }

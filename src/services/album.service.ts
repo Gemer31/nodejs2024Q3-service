@@ -7,17 +7,28 @@ import { AlbumDto, CreateAlbumDto, UpdateAlbumDto } from '../dto/album.dto';
 export class AlbumService {
   private albums: Map<string, AlbumDto> = new Map();
 
-  public async getAll(artistId?: string): Promise<AlbumDto[]> {
+  public async getAll({
+    artistId,
+    albumId,
+    ids,
+  }: {
+    artistId?: string;
+    albumId?: string;
+    ids?: string[];
+  } = {}): Promise<AlbumDto[]> {
     const albums: AlbumDto[] = [...this.albums.values()];
     if (artistId) {
-      return albums.filter((a) => a.artistId !== artistId);
+      return albums.filter((a) => a.artistId === artistId);
+    }
+    if (ids?.length) {
+      return albums.filter((a) => ids.includes(a.id));
     }
     return albums;
   }
 
-  public async get(id: string): Promise<AlbumDto> {
+  public async get(id: string, throwErr: boolean = true): Promise<AlbumDto> {
     const album: AlbumDto = this.albums.get(id);
-    if (!album) {
+    if (!album && throwErr) {
       throw new NotFoundException(MessageHelper.entityNotFound('Album', id));
     }
     return this.albums.get(id);
@@ -46,5 +57,12 @@ export class AlbumService {
   public async delete(id: string): Promise<void> {
     const album = await this.get(id);
     this.albums.delete(album.id);
+  }
+
+  public async removerArtistFromAlbums(artistId: string): Promise<void> {
+    const albums = await this.getAll({ artistId });
+    albums.forEach(async (a) => {
+      await this.update(a.id, { artistId: null });
+    });
   }
 }

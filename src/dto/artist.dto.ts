@@ -1,5 +1,5 @@
 import { IsBoolean, IsString, IsUUID } from 'class-validator';
-import { PartialType } from "@nestjs/mapped-types";
+import { PartialType } from '@nestjs/mapped-types';
 
 export class CreateArtistDto {
   @IsString()

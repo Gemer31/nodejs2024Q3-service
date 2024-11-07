@@ -10,7 +10,7 @@ export class CreateAlbumDto {
 
   @IsString()
   @ValidateIf((_, value) => value !== null)
-  artistId: string | null; // refers to Artist
+  artistId: string | null;
 }
 
 export class UpdateAlbumDto extends PartialType(CreateAlbumDto) {}

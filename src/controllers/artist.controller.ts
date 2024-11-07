@@ -13,12 +13,14 @@ import { MessageHelper } from '../helpers/message.helper';
 import { ArtistService } from '../services/artist.service';
 import { ArtistDto, CreateArtistDto } from '../dto/artist.dto';
 import { AlbumService } from '../services/album.service';
+import { TrackService } from '../services/track.service';
 
 @Controller('artist')
 export class ArtistController {
   constructor(
     private artistService: ArtistService,
     private albumService: AlbumService,
+    private trackService: TrackService,
   ) {}
 
   @Get()
@@ -48,10 +50,8 @@ export class ArtistController {
   @HttpCode(204)
   async delete(@Param() { id }: IdDto): Promise<string> {
     await this.artistService.delete(id);
-    const albums = await this.albumService.getAll(id);
-    albums.forEach(async (a) => {
-      await this.albumService.update(a.id, { artistId: null });
-    });
+    await this.albumService.removerArtistFromAlbums(id);
+    await this.trackService.removeArtistFromTrack(id);
     return MessageHelper.deleteSuccessfully('Artist');
   }
 }
