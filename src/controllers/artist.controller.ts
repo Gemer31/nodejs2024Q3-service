@@ -12,16 +12,11 @@ import { IdDto } from '../dto/common.dto';
 import { MessageHelper } from '../helpers/message.helper';
 import { ArtistService } from '../services/artist.service';
 import { ArtistDto, CreateArtistDto } from '../dto/artist.dto';
-import { AlbumService } from '../services/album.service';
-import { TrackService } from '../services/track.service';
+import { StatusCodes } from 'http-status-codes';
 
 @Controller('artist')
 export class ArtistController {
-  constructor(
-    private artistService: ArtistService,
-    private albumService: AlbumService,
-    private trackService: TrackService,
-  ) {}
+  constructor(private artistService: ArtistService) {}
 
   @Get()
   getAll(): Promise<ArtistDto[]> {
@@ -47,11 +42,9 @@ export class ArtistController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(StatusCodes.NO_CONTENT)
   async delete(@Param() { id }: IdDto): Promise<string> {
     await this.artistService.delete(id);
-    await this.albumService.removerArtistFromAlbums(id);
-    await this.trackService.removeArtistFromTrack(id);
     return MessageHelper.deleteSuccessfully('Artist');
   }
 }
