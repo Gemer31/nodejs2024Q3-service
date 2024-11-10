@@ -3,6 +3,6 @@ export interface IUser {
   login: string;
   password: string;
   version: number;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: string;
+  updatedAt: string;
 }

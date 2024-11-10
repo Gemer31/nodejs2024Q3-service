@@ -15,6 +15,7 @@ import {
   UserResponseDto,
 } from '../dto/user.dto';
 import { IdDto } from '../dto/common.dto';
+import { StatusCodes } from 'http-status-codes';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -26,7 +27,6 @@ import {
   ApiParam,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { StatusCodes } from 'http-status-codes';
 import { SwaggerExamples } from '../helpers/swagger.helper';
 
 @Controller('user')
@@ -45,8 +45,9 @@ export class UserController {
     description: 'Access token is missing or invalid',
   })
   @Get()
-  getAll() {
-    return this.userService.getAll();
+  async getAll() {
+    const users = await this.userService.getAll();
+    return users.map((user) => this.userService.getUserResponseDto(user));
   }
 
   @ApiOperation({
@@ -72,8 +73,9 @@ export class UserController {
     description: 'user was not found',
   })
   @Get(':id')
-  async get(@Param() { id }: IdDto): Promise<UserResponseDto> {
-    return this.userService.get(id);
+  async get(@Param() { id }: IdDto) {
+    const user = await this.userService.get(id);
+    return this.userService.getUserResponseDto(user);
   }
 
   @ApiOperation({
@@ -91,8 +93,9 @@ export class UserController {
     description: 'Access token is missing or invalid',
   })
   @Post()
-  create(@Body() body: CreateUserDto): Promise<UserResponseDto> {
-    return this.userService.create(body);
+  async create(@Body() body: CreateUserDto) {
+    const user = await this.userService.create(body);
+    return this.userService.getUserResponseDto(user);
   }
 
   @ApiOperation({
@@ -126,7 +129,8 @@ export class UserController {
     @Body() body: UpdatePasswordDto,
   ): Promise<UserResponseDto> {
     await this.userService.get(id);
-    return this.userService.update(id, body);
+    const user = await this.userService.updatePassword(id, body);
+    return this.userService.getUserResponseDto(user);
   }
 
   @ApiOperation({
