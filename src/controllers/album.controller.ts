@@ -12,7 +12,6 @@ import { IdDto } from '../dto/common.dto';
 import { MessageHelper } from '../helpers/message.helper';
 import { AlbumService } from '../services/album.service';
 import { AlbumDto, CreateAlbumDto } from '../dto/album.dto';
-import { TrackService } from '../services/track.service';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -28,10 +27,7 @@ import { StatusCodes } from 'http-status-codes';
 
 @Controller('album')
 export class AlbumController {
-  constructor(
-    private albumService: AlbumService,
-    private trackService: TrackService,
-  ) {}
+  constructor(private albumService: AlbumService) {}
 
   @ApiOperation({
     summary: 'Get albums list',
@@ -150,7 +146,6 @@ export class AlbumController {
   @HttpCode(StatusCodes.NO_CONTENT)
   async delete(@Param() { id }: IdDto): Promise<string> {
     await this.albumService.delete(id);
-    await this.trackService.removeAlbumFromTrack(id);
     return MessageHelper.deleteSuccessfully('Album');
   }
 }

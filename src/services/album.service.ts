@@ -1,68 +1,57 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 } from 'uuid';
-import { MessageHelper } from '../helpers/message.helper';
 import { AlbumDto, CreateAlbumDto, UpdateAlbumDto } from '../dto/album.dto';
+import { PrismaService } from './prisma.service';
+import { MessageHelper } from '../helpers/message.helper';
 
 @Injectable()
 export class AlbumService {
-  private albums: Map<string, AlbumDto> = new Map();
+  constructor(private prisma: PrismaService) {}
 
-  public async getAll({
-    artistId,
-    albumId,
-    ids,
-  }: {
-    artistId?: string;
-    albumId?: string;
-    ids?: string[];
-  } = {}): Promise<AlbumDto[]> {
-    const albums: AlbumDto[] = [...this.albums.values()];
-    if (artistId) {
-      return albums.filter((a) => a.artistId === artistId);
+  async getAll(params?: { ids?: string[]; artistId?: string }) {
+    let albums;
+
+    if (params?.artistId) {
+      albums = await this.prisma.album.findMany({
+        where: { artistId: params.artistId },
+      });
+    } else if (params?.ids?.length) {
+      albums = await this.prisma.album.findMany({
+        where: {
+          id: { in: params.ids },
+        },
+      });
+    } else {
+      albums = await this.prisma.album.findMany();
     }
-    if (ids?.length) {
-      return albums.filter((a) => ids.includes(a.id));
-    }
-    return albums;
+
+    return albums as AlbumDto[];
   }
 
-  public async get(id: string, throwErr: boolean = true): Promise<AlbumDto> {
-    const album: AlbumDto = this.albums.get(id);
+  async get(id: string, throwErr = true) {
+    const album = await this.prisma.album.findUnique({ where: { id } });
     if (!album && throwErr) {
       throw new NotFoundException(MessageHelper.entityNotFound('Album', id));
     }
-    return this.albums.get(id);
+    return album as AlbumDto;
   }
 
-  public async create(data: CreateAlbumDto): Promise<AlbumDto> {
-    const newAlbum: AlbumDto = {
-      id: v4(),
-      ...data,
-    };
-    this.albums.set(newAlbum.id, newAlbum);
-
-    return newAlbum;
+  async create(createAlbumDto: CreateAlbumDto) {
+    const album = await this.prisma.album.create({ data: createAlbumDto });
+    return album as AlbumDto;
   }
 
-  public async update(id: string, data: UpdateAlbumDto): Promise<AlbumDto> {
-    const album = await this.get(id);
-    const updateAlbum = {
-      ...album,
-      ...data,
-    };
-    this.albums.set(id, updateAlbum);
-    return updateAlbum;
-  }
-
-  public async delete(id: string): Promise<void> {
-    const album = await this.get(id);
-    this.albums.delete(album.id);
-  }
-
-  public async removerArtistFromAlbums(artistId: string): Promise<void> {
-    const albums = await this.getAll({ artistId });
-    albums.forEach(async (a) => {
-      await this.update(a.id, { artistId: null });
+  async update(id: string, data: UpdateAlbumDto) {
+    let album = await this.get(id);
+    album = await this.prisma.album.update({
+      where: { id },
+      data: { ...album, ...data },
     });
+    return album as AlbumDto;
+  }
+
+  async delete(id: string) {
+    let album = await this.get(id);
+    album = await this.prisma.album.delete({ where: { id: album.id } });
+    return album as AlbumDto;
   }
 }
