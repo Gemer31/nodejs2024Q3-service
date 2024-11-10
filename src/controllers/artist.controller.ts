@@ -12,8 +12,7 @@ import { IdDto } from '../dto/common.dto';
 import { MessageHelper } from '../helpers/message.helper';
 import { ArtistService } from '../services/artist.service';
 import { ArtistDto, CreateArtistDto } from '../dto/artist.dto';
-import { AlbumService } from '../services/album.service';
-import { TrackService } from '../services/track.service';
+import { StatusCodes } from 'http-status-codes';
 import {
   ApiBadRequestResponse,
   ApiCreatedResponse,
@@ -25,15 +24,10 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { SwaggerExamples } from '../helpers/swagger.helper';
-import { StatusCodes } from 'http-status-codes';
 
 @Controller('artist')
 export class ArtistController {
-  constructor(
-    private artistService: ArtistService,
-    private albumService: AlbumService,
-    private trackService: TrackService,
-  ) {}
+  constructor(private artistService: ArtistService) {}
 
   @ApiOperation({
     summary: 'Get all artists',
@@ -152,8 +146,6 @@ export class ArtistController {
   @HttpCode(StatusCodes.NO_CONTENT)
   async delete(@Param() { id }: IdDto): Promise<string> {
     await this.artistService.delete(id);
-    await this.albumService.removerArtistFromAlbums(id);
-    await this.trackService.removeArtistFromTrack(id);
     return MessageHelper.deleteSuccessfully('Artist');
   }
 }

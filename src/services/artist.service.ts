@@ -1,53 +1,61 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 } from 'uuid';
+import { ArtistDto, CreateArtistDto, UpdateArtistDto } from '../dto/artist.dto';
+import { PrismaService } from './prisma.service';
 import { MessageHelper } from '../helpers/message.helper';
-import { CreateArtistDto, ArtistDto, UpdateArtistDto } from '../dto/artist.dto';
 
 @Injectable()
 export class ArtistService {
-  private artists: Map<string, ArtistDto> = new Map();
+  constructor(private prisma: PrismaService) {}
 
-  public async getAll({
-    ids,
-  }: {
-    ids?: string[];
-  } = {}): Promise<ArtistDto[]> {
-    const artists = [...this.artists.values()];
+  public async getAll(params?: { ids?: string[] }) {
+    let artists;
 
-    if (ids?.length) {
-      return artists.filter((a) => ids.includes(a.id));
+    if (params?.ids?.length) {
+      artists = await this.prisma.artist.findMany({
+        where: {
+          id: {
+            in: params.ids,
+          },
+        },
+      });
+    } else {
+      artists = await this.prisma.artist.findMany();
     }
 
-    return artists;
+    return artists as ArtistDto[];
   }
 
-  public async get(id: string, throwErr: boolean = true): Promise<ArtistDto> {
-    const artist: ArtistDto = this.artists.get(id);
+  public async get(id: string, throwErr = true) {
+    const artist = await this.prisma.artist.findUnique({
+      where: { id },
+    });
     if (!artist && throwErr) {
       throw new NotFoundException(MessageHelper.entityNotFound('Artist', id));
     }
-    return this.artists.get(id);
+    return artist as ArtistDto;
   }
 
-  public async create(data: CreateArtistDto): Promise<ArtistDto> {
-    const newArtist: ArtistDto = {
-      id: v4(),
-      ...data,
-    };
-    this.artists.set(newArtist.id, newArtist);
-
-    return newArtist;
+  public async create(createArtistDto: CreateArtistDto) {
+    const artist = await this.prisma.artist.create({
+      data: createArtistDto,
+    });
+    return artist as ArtistDto;
   }
 
-  public async update(id: string, data: UpdateArtistDto): Promise<ArtistDto> {
-    const artist = await this.get(id);
-    const updateArtist: ArtistDto = { ...artist, ...data };
-    this.artists.set(id, updateArtist);
-    return updateArtist;
+  public async update(id: string, data: UpdateArtistDto) {
+    let artist = await this.get(id);
+    artist = await this.prisma.artist.update({
+      where: { id },
+      data: { ...artist, ...data },
+    });
+    return artist as ArtistDto;
   }
 
-  public async delete(id: string): Promise<void> {
-    const artist = await this.get(id);
-    this.artists.delete(artist.id);
+  public async delete(id: string) {
+    let artist = await this.get(id);
+    artist = await this.prisma.artist.delete({
+      where: { id: artist.id },
+    });
+    return artist as ArtistDto;
   }
 }
