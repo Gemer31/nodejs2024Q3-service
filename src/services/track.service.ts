@@ -1,77 +1,64 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 } from 'uuid';
-import { CreateTrackDto, TrackDto, UpdateTrackDto } from '../dto/track.dto';
+import { TrackDto, UpdateTrackDto } from '../dto/track.dto';
+import { PrismaService } from './prisma.service';
 import { MessageHelper } from '../helpers/message.helper';
 
 @Injectable()
 export class TrackService {
-  private tracks: Map<string, TrackDto> = new Map();
+  constructor(private prisma: PrismaService) {}
 
-  public async getAll({
-    artistId,
-    albumId,
-    ids,
-  }: {
-    artistId?: string;
-    albumId?: string;
+  public async getAll(params?: {
     ids?: string[];
-  } = {}): Promise<TrackDto[]> {
-    const tracks = [...this.tracks.values()];
+    albumId?: string;
+  }): Promise<TrackDto[]> {
+    let tracks;
 
-    if (artistId) {
-      return tracks.filter((t) => t.artistId === artistId);
-    }
-    if (albumId) {
-      return tracks.filter((t) => t.albumId === albumId);
-    }
-    if (ids?.length) {
-      return tracks.filter((t) => ids.includes(t.id));
+    if (params?.albumId) {
+      tracks = await this.prisma.track.findMany({
+        where: { albumId: params.albumId },
+      });
+    } else if (params?.ids?.length) {
+      tracks = await this.prisma.track.findMany({
+        where: {
+          id: { in: params.ids },
+        },
+      });
+    } else {
+      tracks = await this.prisma.track.findMany();
     }
 
-    return tracks;
+    return tracks as TrackDto[];
   }
 
-  public async get(id: string, throwErr: boolean = true): Promise<TrackDto> {
-    const track: TrackDto = this.tracks.get(id);
+  public async get(id: string, throwErr = true): Promise<TrackDto> {
+    const track = await this.prisma.track.findUnique({
+      where: { id },
+    });
     if (!track && throwErr) {
       throw new NotFoundException(MessageHelper.entityNotFound('Track', id));
     }
-    return this.tracks.get(id);
+    return track as TrackDto;
   }
 
-  public async create(data: CreateTrackDto): Promise<TrackDto> {
-    const newTrack: TrackDto = {
-      id: v4(),
-      ...data,
-    };
-    this.tracks.set(newTrack.id, newTrack);
-
-    return newTrack;
+  public async create(data) {
+    const track = await this.prisma.track.create({ data });
+    return track as TrackDto;
   }
 
-  public async update(id: string, data: UpdateTrackDto): Promise<TrackDto> {
-    const track = await this.get(id);
-    const updateTrack = { ...track, ...data };
-    this.tracks.set(id, updateTrack);
-    return updateTrack;
-  }
-
-  public async delete(id: string): Promise<void> {
-    const track = await this.get(id);
-    this.tracks.delete(track.id);
-  }
-
-  public async removeArtistFromTrack(artistId: string): Promise<void> {
-    const tracks = await this.getAll({ artistId });
-    tracks.forEach(async (track) => {
-      await this.update(track.id, { artistId: null });
+  public async update(id: string, data: UpdateTrackDto) {
+    let track = await this.get(id);
+    track = await this.prisma.track.update({
+      where: { id },
+      data: { ...track, ...data },
     });
+    return track as TrackDto;
   }
 
-  public async removeAlbumFromTrack(albumId: string): Promise<void> {
-    const tracks = await this.getAll({ albumId });
-    tracks.forEach(async (track) => {
-      await this.update(track.id, { albumId: null });
+  public async delete(id: string): Promise<TrackDto> {
+    let track = await this.get(id);
+    track = await this.prisma.track.delete({
+      where: { id: track.id },
     });
+    return track as TrackDto;
   }
 }
