@@ -3,7 +3,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { v4 } from 'uuid';
 import {
   CreateUserDto,
   UpdatePasswordDto,
@@ -11,62 +10,59 @@ import {
 } from '../dto/user.dto';
 import { IUser } from '../models/user.model';
 import { MessageHelper } from '../helpers/message.helper';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class UserService {
-  private users: Map<string, IUser> = new Map();
+  constructor(private prisma: PrismaService) {}
 
-  private getResponseDto(user: IUser): UserResponseDto {
-    const userDto = { ...user };
-    delete userDto?.password;
-    return userDto;
+  public getUserResponseDto(user): UserResponseDto {
+    delete user?.password;
+    return {
+      ...user,
+      createdAt: +new Date(user.createdAt),
+      updatedAt: +new Date(user.updatedAt),
+    };
   }
 
-  public async getAll(): Promise<UserResponseDto[]> {
-    return [...this.users.values()].map(this.getResponseDto);
+  public async getAll() {
+    return (await this.prisma.user.findMany()) as unknown as IUser[];
   }
 
-  public async get(id: string): Promise<UserResponseDto> {
-    const user: IUser = this.users.get(id);
+  public async get(id: string) {
+    const user = (await this.prisma.user.findUnique({
+      where: { id },
+    })) as unknown as IUser;
     if (!user) {
       throw new NotFoundException(MessageHelper.entityNotFound('User', id));
     }
-    return this.getResponseDto(user);
+    return user;
   }
 
-  public async create(data: CreateUserDto): Promise<UserResponseDto> {
-    const currentDate: number = +new Date();
-    const newUser: IUser = {
-      id: v4(),
-      version: 1,
-      createdAt: currentDate,
-      updatedAt: currentDate,
-      ...data,
-    };
-    this.users.set(newUser.id, newUser);
-
-    return this.getResponseDto(newUser);
+  public async create(data: CreateUserDto) {
+    return (await this.prisma.user.create({
+      data: { ...data, version: 1 },
+    })) as unknown as IUser;
   }
 
-  public async update(
+  public async updatePassword(
     id: string,
     { oldPassword, newPassword }: UpdatePasswordDto,
-  ): Promise<UserResponseDto> {
-    const user = this.users.get(id);
+  ) {
+    const user = await this.get(id);
 
     if (user.password !== oldPassword) {
       throw new ForbiddenException('Old password is incorrect');
     }
 
-    user.password = newPassword;
-    user.version += 1;
-    user.updatedAt = +new Date();
-
-    return this.getResponseDto(user);
+    return (await this.prisma.user.update({
+      where: { id },
+      data: { password: newPassword, version: user.version + 1 },
+    })) as unknown as IUser;
   }
 
-  public async delete(id: string): Promise<void> {
+  public async delete(id: string) {
     const user = await this.get(id);
-    this.users.delete(user.id);
+    return this.prisma.user.delete({ where: { id: user.id } });
   }
 }
