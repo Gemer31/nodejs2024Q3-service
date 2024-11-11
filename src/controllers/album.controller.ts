@@ -24,6 +24,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { SwaggerExamples } from '../helpers/swagger.helper';
+import { StatusCodes } from 'http-status-codes';
 
 @Controller('album')
 export class AlbumController {
@@ -81,7 +82,7 @@ export class AlbumController {
   })
   @ApiCreatedResponse({
     description: 'Album is created',
-    example: SwaggerExamples.ALBUM_CREATED,
+    example: SwaggerExamples.ALBUM,
   })
   @ApiBadRequestResponse({
     description: 'Bad request. body does not contain required fields',
@@ -146,7 +147,7 @@ export class AlbumController {
     description: 'Album was not found',
   })
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(StatusCodes.NO_CONTENT)
   async delete(@Param() { id }: IdDto): Promise<string> {
     await this.albumService.delete(id);
     await this.trackService.removeAlbumFromTrack(id);
