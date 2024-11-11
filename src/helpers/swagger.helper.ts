@@ -41,4 +41,20 @@ export enum SwaggerExamples {
     '  "albumId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",\n' +
     '  "duration": 262\n' +
     '}',
+  USERS = '[\n' +
+    '  {\n' +
+    '    "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",\n' +
+    '    "login": "TestUser",\n' +
+    '    "version": 1,\n' +
+    '    "createAt": 1655000000,\n' +
+    '    "updateAt": 1655000000\n' +
+    '  }\n' +
+    ']',
+  USER = '{\n' +
+    '  "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",\n' +
+    '  "login": "TestUser",\n' +
+    '  "version": 1,\n' +
+    '  "createAt": 1655000000,\n' +
+    '  "updateAt": 1655000000\n' +
+    '}',
 }
