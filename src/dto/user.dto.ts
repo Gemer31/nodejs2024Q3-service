@@ -1,7 +1,8 @@
 import { IsNumber, IsString } from 'class-validator';
 import { IdDto } from './common.dto';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiExtraModels, ApiProperty, ApiSchema } from "@nestjs/swagger";
 
+@ApiSchema({ name: 'User' })
 export class UserResponseDto extends IdDto {
   @ApiProperty()
   @IsString()
@@ -20,6 +21,7 @@ export class UserResponseDto extends IdDto {
   updatedAt: number;
 }
 
+@ApiSchema({ name: 'CreateUser' })
 export class CreateUserDto {
   @ApiProperty()
   @IsString()
@@ -30,6 +32,7 @@ export class CreateUserDto {
   password: string;
 }
 
+@ApiSchema({ name: 'UpdatePassword' })
 export class UpdatePasswordDto {
   @ApiProperty()
   @IsString()

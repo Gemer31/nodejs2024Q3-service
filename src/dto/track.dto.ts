@@ -1,7 +1,8 @@
 import { IsNumber, IsString, IsUUID, ValidateIf } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiSchema } from "@nestjs/swagger";
 
+@ApiSchema({ name: 'CreateTrack' })
 export class CreateTrackDto {
   @ApiProperty()
   @IsString()
@@ -24,9 +25,12 @@ export class CreateTrackDto {
   duration?: number;
 }
 
+@ApiSchema({ name: 'Track' })
 export class TrackDto extends CreateTrackDto {
+  @ApiProperty()
   @IsUUID()
   id: string;
 }
 
+@ApiSchema({ name: 'UpdateTrack' })
 export class UpdateTrackDto extends PartialType(CreateTrackDto) {}
