@@ -34,8 +34,8 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @ApiOperation({
-    summary: 'Get all artists',
-    description: 'Get all artists',
+    summary: 'Get all users',
+    description: 'Get all users',
   })
   @ApiOkResponse({
     description: 'Successful operation',
@@ -50,8 +50,8 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: 'Get single artist by id',
-    description: 'Get single artist by id',
+    summary: 'Get single user by id',
+    description: 'Get single user by id',
   })
   @ApiParam({
     name: 'id',
@@ -63,13 +63,13 @@ export class UserController {
     example: SwaggerExamples.USER,
   })
   @ApiBadRequestResponse({
-    description: 'Bad request. artistId is invalid (not uuid)',
+    description: 'Bad request. userId is invalid (not uuid)',
   })
   @ApiUnauthorizedResponse({
     description: 'Access token is missing or invalid',
   })
   @ApiNotFoundResponse({
-    description: 'Artist was not found',
+    description: 'user was not found',
   })
   @Get(':id')
   async get(@Param() { id }: IdDto): Promise<UserResponseDto> {
@@ -77,11 +77,11 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: 'Add new artist',
-    description: 'Add new artist',
+    summary: 'Add new user',
+    description: 'Add new user',
   })
   @ApiCreatedResponse({
-    description: 'Artist is created',
+    description: 'user is created',
     example: SwaggerExamples.USER,
   })
   @ApiBadRequestResponse({
@@ -105,11 +105,11 @@ export class UserController {
     required: true,
   })
   @ApiOkResponse({
-    description: 'The artist has been updated.',
+    description: 'The user has been updated.',
     example: SwaggerExamples.USER,
   })
   @ApiBadRequestResponse({
-    description: 'Bad request. artistId is invalid (not uuid)',
+    description: 'Bad request. userId is invalid (not uuid)',
   })
   @ApiUnauthorizedResponse({
     description: 'Access token is missing or invalid',
@@ -118,7 +118,7 @@ export class UserController {
     description: 'oldPassword is wrong',
   })
   @ApiNotFoundResponse({
-    description: 'Artist was not found',
+    description: 'user was not found',
   })
   @Put(':id')
   async update(
@@ -130,8 +130,8 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: 'Delete artist',
-    description: 'Delete artist from library',
+    summary: 'Delete user',
+    description: 'Delete user from library',
   })
   @ApiParam({
     name: 'id',
@@ -142,13 +142,13 @@ export class UserController {
     description: 'Deleted successfully',
   })
   @ApiBadRequestResponse({
-    description: 'Bad request. artistId is invalid (not uuid)',
+    description: 'Bad request. UserId is invalid (not uuid)',
   })
   @ApiUnauthorizedResponse({
     description: 'Access token is missing or invalid',
   })
   @ApiNotFoundResponse({
-    description: 'Artist was not found',
+    description: 'user was not found',
   })
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)

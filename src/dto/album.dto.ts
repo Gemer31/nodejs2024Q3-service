@@ -1,6 +1,6 @@
 import { IsNumber, IsString, IsUUID, ValidateIf } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
-import { ApiProperty, ApiSchema } from "@nestjs/swagger";
+import { ApiProperty, ApiSchema } from '@nestjs/swagger';
 
 export class CreateAlbumDto {
   @ApiProperty()

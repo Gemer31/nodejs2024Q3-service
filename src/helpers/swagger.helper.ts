@@ -57,4 +57,30 @@ export enum SwaggerExamples {
     '  "createAt": 1655000000,\n' +
     '  "updateAt": 1655000000\n' +
     '}',
+  FAVORITES = '{\n' +
+    '  "artists": [\n' +
+    '    {\n' +
+    '      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",\n' +
+    '      "name": "Freddie Mercury",\n' +
+    '      "grammy": false\n' +
+    '    }\n' +
+    '  ],\n' +
+    '  "albums": [\n' +
+    '    {\n' +
+    '      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",\n' +
+    '      "name": "Innuendo",\n' +
+    '      "year": 1991,\n' +
+    '      "artistId": "3fa85f64-5717-4562-b3fc-2c963f66afa6"\n' +
+    '    }\n' +
+    '  ],\n' +
+    '  "tracks": [\n' +
+    '    {\n' +
+    '      "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",\n' +
+    '      "name": "The Show Must Go On",\n' +
+    '      "artistId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",\n' +
+    '      "albumId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",\n' +
+    '      "duration": 262\n' +
+    '    }\n' +
+    '  ]\n' +
+    '}',
 }
