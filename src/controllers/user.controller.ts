@@ -56,7 +56,8 @@ export class UserController {
   })
   @ApiParam({
     name: 'id',
-    type: 'string($uuid)',
+    type: 'string',
+    format: 'uuid',
     required: true,
   })
   @ApiOkResponse({
@@ -104,7 +105,8 @@ export class UserController {
   })
   @ApiParam({
     name: 'id',
-    type: 'string($uuid)',
+    type: 'string',
+    format: 'uuid',
     required: true,
   })
   @ApiOkResponse({
@@ -139,7 +141,8 @@ export class UserController {
   })
   @ApiParam({
     name: 'id',
-    type: 'string($uuid)',
+    type: 'string',
+    format: 'uuid',
     required: true,
   })
   @ApiNoContentResponse({
