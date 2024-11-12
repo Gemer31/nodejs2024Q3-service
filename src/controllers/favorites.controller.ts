@@ -70,7 +70,8 @@ export class FavouritesController {
   })
   @ApiParam({
     name: 'id',
-    type: 'string($uuid)',
+    type: 'string',
+    format: 'uuid',
     required: true,
   })
   @ApiCreatedResponse({
@@ -105,7 +106,8 @@ export class FavouritesController {
   })
   @ApiParam({
     name: 'id',
-    type: 'string($uuid)',
+    type: 'string',
+    format: 'uuid',
     required: true,
   })
   @ApiNoContentResponse({
@@ -135,7 +137,8 @@ export class FavouritesController {
   })
   @ApiParam({
     name: 'id',
-    type: 'string($uuid)',
+    type: 'string',
+    format: 'uuid',
     required: true,
   })
   @ApiCreatedResponse({
@@ -170,7 +173,8 @@ export class FavouritesController {
   })
   @ApiParam({
     name: 'id',
-    type: 'string($uuid)',
+    type: 'string',
+    format: 'uuid',
     required: true,
   })
   @ApiNoContentResponse({
@@ -200,7 +204,8 @@ export class FavouritesController {
   })
   @ApiParam({
     name: 'id',
-    type: 'string($uuid)',
+    type: 'string',
+    format: 'uuid',
     required: true,
   })
   @ApiCreatedResponse({
@@ -235,7 +240,8 @@ export class FavouritesController {
   })
   @ApiParam({
     name: 'id',
-    type: 'string($uuid)',
+    type: 'string',
+    format: 'uuid',
     required: true,
   })
   @ApiNoContentResponse({

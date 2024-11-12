@@ -13,14 +13,14 @@ export class TrackService {
   }): Promise<TrackDto[]> {
     let tracks;
 
-    if (params?.albumId) {
+    if (params?.albumId !== undefined) {
       tracks = await this.prisma.track.findMany({
         where: { albumId: params.albumId },
       });
-    } else if (params?.ids?.length) {
+    } else if (params?.ids !== undefined) {
       tracks = await this.prisma.track.findMany({
         where: {
-          id: { in: params.ids },
+          id: { in: params.ids || [] },
         },
       });
     } else {

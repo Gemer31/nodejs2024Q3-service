@@ -1,43 +1,79 @@
 import { Injectable } from '@nestjs/common';
 import { IFavorites } from '../models/favorites.model';
+import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class FavoriteService {
-  private favorites: IFavorites = {
-    albums: [],
-    artists: [],
-    tracks: [],
-  };
+  constructor(private prisma: PrismaService) {
+  }
 
   public async get(): Promise<IFavorites> {
-    return this.favorites;
+    let favs = await this.prisma.favorites.findFirst();
+
+    if (!favs) {
+      favs = await this.prisma.favorites.create({
+        data: {
+          albums: [],
+          artists: [],
+          tracks: [],
+        },
+      });
+    }
+
+    return favs;
   }
 
   public async addTrack(trackId: string): Promise<void> {
-    this.favorites.tracks = [...new Set([trackId, ...this.favorites.tracks])];
+    const favs = await this.get();
+    favs.tracks = [...new Set([trackId, ...favs.tracks])];
+    await this.prisma.favorites.update({
+      where: { id: favs.id },
+      data: favs
+    });
   }
 
   public async deleteTrack(trackId: string): Promise<void> {
-    this.favorites.tracks = this.favorites.tracks.filter((t) => t !== trackId);
+    const favs = await this.get();
+    favs.tracks = favs.tracks.filter((t) => t !== trackId);
+    await this.prisma.favorites.update({
+      where: { id: favs.id },
+      data: favs
+    });
   }
 
   public async addArtist(artistId: string): Promise<void> {
-    this.favorites.artists = [
-      ...new Set([artistId, ...this.favorites.artists]),
-    ];
+    const favs = await this.get();
+    favs.artists = [...new Set([artistId, ...favs.artists])];
+    await this.prisma.favorites.update({
+      where: { id: favs.id },
+      data: favs
+    });
   }
 
   public async deleteArtist(artistId: string): Promise<void> {
-    this.favorites.artists = this.favorites.artists.filter(
-      (a) => a !== artistId,
-    );
+    const favs = await this.get();
+    favs.artists = favs.artists.filter((a) => a !== artistId);
+    await this.prisma.favorites.update({
+      where: { id: favs.id },
+      data: favs
+    });
   }
 
   public async addAlbum(albumId: string): Promise<void> {
-    this.favorites.albums = [...new Set([albumId, ...this.favorites.albums])];
+    const favs = await this.get();
+    favs.albums = [...new Set([albumId, ...favs.albums])];
+    await this.prisma.favorites.update({
+      where: { id: favs.id },
+      data: favs
+    });
   }
 
   public async deleteAlbum(albumId: string): Promise<void> {
-    this.favorites.albums = this.favorites.albums.filter((a) => a !== albumId);
+    const favs = await this.get();
+    favs.albums = favs.albums.filter((a) => a !== albumId);
+    await this.prisma.favorites.update({
+      where: { id: favs.id },
+      data: favs
+    });
   }
 }

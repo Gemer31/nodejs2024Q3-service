@@ -10,14 +10,14 @@ export class AlbumService {
   async getAll(params?: { ids?: string[]; artistId?: string }) {
     let albums;
 
-    if (params?.artistId) {
+    if (params?.artistId !== undefined) {
       albums = await this.prisma.album.findMany({
         where: { artistId: params.artistId },
       });
-    } else if (params?.ids?.length) {
+    } else if (params?.ids !== undefined) {
       albums = await this.prisma.album.findMany({
         where: {
-          id: { in: params.ids },
+          id: { in: params.ids || [] },
         },
       });
     } else {

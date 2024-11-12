@@ -10,12 +10,10 @@ export class ArtistService {
   public async getAll(params?: { ids?: string[] }) {
     let artists;
 
-    if (params?.ids?.length) {
+    if (params?.ids !== undefined) {
       artists = await this.prisma.artist.findMany({
         where: {
-          id: {
-            in: params.ids,
-          },
+          id: { in: params.ids || [] },
         },
       });
     } else {
