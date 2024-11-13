@@ -1,0 +1,42 @@
+services:
+  nest-app:
+    container_name: nest_app
+    # build: ./
+    image: romashok31/nodejs2024-nest-app:latest
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+    volumes:
+      - app_logs:/var/log/app
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    command: sh -c "npx prisma generate --no-engine && npm start"
+    restart: always
+    networks:
+      - user-defined
+
+  postgres:
+    container_name: prisma_postgres
+    # build: ./prisma
+    image: romashok31/nodejs2024-postgres-bd:latest
+    environment:
+      PG_DATA: /var/lib/postgresql/data
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_URL: ${DATABASE_URL}
+      PULSE_API_KEY: ${PULSE_API_KEY}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - user-defined
+
+volumes:
+  postgres_data:
+  app_logs:
+
+networks:
+  user-defined:
+    driver: bridge
