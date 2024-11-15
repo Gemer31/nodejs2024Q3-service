@@ -8,6 +8,8 @@ import { FavoritesDto } from "./dto/favoritesDto";
 import { TrackDto } from "./dto/track.dto";
 import { AlbumDto } from "./dto/album.dto";
 
+const PORT = process.env.PORT ?? 4000;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(
@@ -26,7 +28,7 @@ async function bootstrap() {
   });
   SwaggerModule.setup('api', app, documentFactory);
 
-  await app.listen(4000);
+  await app.listen(PORT);
 }
 
 bootstrap();

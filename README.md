@@ -11,10 +11,11 @@
 git clone {repository URL}
 ```
 
-## Installing NPM modules
+## Getting started
 
 ```
-npm install
+1. npm install -f
+2. Create .env file (based on .env.example): ./.env
 ```
 
 ## Running application
