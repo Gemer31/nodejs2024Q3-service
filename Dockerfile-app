@@ -8,6 +8,6 @@ RUN npm install -f && npm cache clean --force
 
 COPY . .
 
-EXPOSE $NEST_APP_PORT || 4000
+EXPOSE $NEST_APP_PORT
 
 CMD npm run start:dev
