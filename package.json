@@ -20,6 +20,8 @@
     "docker:stop": "docker compose stop",
     "docker:up": "docker compose up",
     "docker:down": "docker compose down",
+    "docker:scout:app": "docker scout cves --details romashok31/nodejs2024-nest-app",
+    "docker:scout:db": "docker scout cves --details romashok31/nodejs2024-postgres-db",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --testMatch \"<rootDir>/*.spec.ts\" --noStackTrace --runInBand",
     "test:auth": "cross-env TEST_MODE=auth jest --testPathIgnorePatterns refresh.e2e.spec.ts --noStackTrace --runInBand",
