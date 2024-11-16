@@ -4,8 +4,7 @@ import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class FavoriteService {
-  constructor(private prisma: PrismaService) {
-  }
+  constructor(private prisma: PrismaService) {}
 
   public async get(): Promise<IFavorites> {
     let favs = await this.prisma.favorites.findFirst();
@@ -28,7 +27,9 @@ export class FavoriteService {
     favs.tracks = [...new Set([trackId, ...favs.tracks])];
     await this.prisma.favorites.update({
       where: { id: favs.id },
-      data: favs
+      data: {
+        tracks: favs.tracks,
+      },
     });
   }
 
@@ -37,7 +38,9 @@ export class FavoriteService {
     favs.tracks = favs.tracks.filter((t) => t !== trackId);
     await this.prisma.favorites.update({
       where: { id: favs.id },
-      data: favs
+      data: {
+        tracks: favs.tracks,
+      },
     });
   }
 
@@ -46,7 +49,9 @@ export class FavoriteService {
     favs.artists = [...new Set([artistId, ...favs.artists])];
     await this.prisma.favorites.update({
       where: { id: favs.id },
-      data: favs
+      data: {
+        artists: favs.artists,
+      },
     });
   }
 
@@ -55,7 +60,9 @@ export class FavoriteService {
     favs.artists = favs.artists.filter((a) => a !== artistId);
     await this.prisma.favorites.update({
       where: { id: favs.id },
-      data: favs
+      data: {
+        artists: favs.artists,
+      },
     });
   }
 
@@ -64,7 +71,9 @@ export class FavoriteService {
     favs.albums = [...new Set([albumId, ...favs.albums])];
     await this.prisma.favorites.update({
       where: { id: favs.id },
-      data: favs
+      data: {
+        albums: favs.albums,
+      },
     });
   }
 
@@ -73,7 +82,9 @@ export class FavoriteService {
     favs.albums = favs.albums.filter((a) => a !== albumId);
     await this.prisma.favorites.update({
       where: { id: favs.id },
-      data: favs
+      data: {
+        albums: favs.albums,
+      },
     });
   }
 }

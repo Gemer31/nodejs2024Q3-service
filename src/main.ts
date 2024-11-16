@@ -8,7 +8,7 @@ import { FavoritesDto } from "./dto/favoritesDto";
 import { TrackDto } from "./dto/track.dto";
 import { AlbumDto } from "./dto/album.dto";
 
-const PORT = process.env.PORT ?? 4000;
+const PORT = process.env.NEST_APP_PORT ?? 4000;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

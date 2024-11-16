@@ -1,0 +1,13 @@
+FROM node:lts-alpine
+
+WORKDIR /app
+
+COPY package*.json .
+
+RUN npm install -f && npm cache clean --force
+
+COPY . .
+
+EXPOSE $NEST_APP_PORT || 4000
+
+CMD npm run start:dev

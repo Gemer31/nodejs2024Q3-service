@@ -18,11 +18,13 @@ export class TrackService {
         where: { albumId: params.albumId },
       });
     } else if (params?.ids !== undefined) {
-      tracks = await this.prisma.track.findMany({
-        where: {
-          id: { in: params.ids || [] },
-        },
-      });
+      tracks = params.ids?.length
+        ? await this.prisma.track.findMany({
+            where: {
+              id: { in: params.ids || [] },
+            },
+          })
+        : [];
     } else {
       tracks = await this.prisma.track.findMany();
     }

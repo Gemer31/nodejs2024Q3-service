@@ -11,11 +11,13 @@ export class ArtistService {
     let artists;
 
     if (params?.ids !== undefined) {
-      artists = await this.prisma.artist.findMany({
-        where: {
-          id: { in: params.ids || [] },
-        },
-      });
+      artists = params.ids?.length
+        ? await this.prisma.artist.findMany({
+            where: {
+              id: { in: params.ids || [] },
+            },
+          })
+        : [];
     } else {
       artists = await this.prisma.artist.findMany();
     }

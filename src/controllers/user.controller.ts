@@ -28,7 +28,6 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { SwaggerExamples } from '../helpers/swagger.helper';
-import { StatusCodes } from 'http-status-codes';
 
 @Controller('user')
 export class UserController {

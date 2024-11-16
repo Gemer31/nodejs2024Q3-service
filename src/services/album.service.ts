@@ -15,11 +15,13 @@ export class AlbumService {
         where: { artistId: params.artistId },
       });
     } else if (params?.ids !== undefined) {
-      albums = await this.prisma.album.findMany({
-        where: {
-          id: { in: params.ids || [] },
-        },
-      });
+      albums = params.ids?.length
+        ? await this.prisma.album.findMany({
+            where: {
+              id: { in: params.ids || [] },
+            },
+          })
+        : [];
     } else {
       albums = await this.prisma.album.findMany();
     }
