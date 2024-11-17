@@ -1,0 +1,28 @@
+# Build app
+FROM node:lts-alpine AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN --mount=type=cache,target=/root/.npm npm install -f
+
+COPY . .
+
+RUN npm run build
+
+#Build prod image
+FROM node:lts-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN --mount=type=cache,target=/root/.npm npm install -f --omit=dev
+
+COPY --from=build /app/dist ./dist
+COPY ./prisma ./prisma
+
+EXPOSE $NEST_APP_PORT
+
+CMD npm run prisma:generate && node --watch dist/main.js
