@@ -39,8 +39,9 @@ romashok31/nodejs2024-nest-app:latest
 romashok31/nodejs2024-postgres-db:latest
 ```
 
-![test results](assets/app-image-size.png)
-![test results](assets/db-image-size.png)
+![app-image-hub-size](assets/app-image-hub-size.png)
+![db-image-hub-size](assets/db-image-hub-size.png)
+![images-local-size](assets/images-local-size.png)
 
 ## Docker security check
 
