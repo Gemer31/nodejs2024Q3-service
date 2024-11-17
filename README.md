@@ -13,7 +13,8 @@
 ## Running application
 
 1. Create **.env** file based on **.env.sample**(just rename .env.sample => .env).
-2. Use Docker Compose to run the application: ``npm run docker:up``.
+2. Install dependencies: ``npm install -f``
+3. Use Docker Compose to run the application: ``npm run docker:up``.
 Use http://localhost:4000/api (port 4000 it is a default application port in .env) to work with application api.
 
 ## Stop application
@@ -29,7 +30,7 @@ For testing API use command: ``npm run test``.
 
 ![test-check](assets/test-check.png)
 
-**NOTE!:** Application has to be run
+**NOTE!:** Application has to be run and node_modules have been installed
 
 ## Docker hub images
 
