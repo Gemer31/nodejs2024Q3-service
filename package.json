@@ -20,6 +20,7 @@
     "docker:stop": "docker compose stop",
     "docker:up": "docker compose up",
     "docker:down": "docker compose down",
+    "docker:down:all": "docker compose down --volumes --rmi local",
     "docker:scout:app": "docker scout cves --details romashok31/nodejs2024-nest-app",
     "docker:scout:db": "docker scout cves --details romashok31/nodejs2024-postgres-db",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

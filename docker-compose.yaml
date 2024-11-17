@@ -17,7 +17,8 @@ services:
     expose:
       - ${NEST_APP_PORT}
     depends_on:
-      - postgres-db
+      postgres-db:
+        condition: service_healthy
     stdin_open: true
     volumes:
       - .:/app
@@ -43,6 +44,12 @@ services:
       - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     expose:
       - ${POSTGRES_PORT}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      start_period: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - db_data:/var/lib/postgresql/data
       - db_logs:/var/log/postgresql
