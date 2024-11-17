@@ -4,67 +4,55 @@
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker. [Download & Install Docker](https://docs.docker.com/engine/install/).  
 
 ## Downloading
 
-```
-git clone {repository URL}
-```
-
-## Getting started
-
-```
-1. npm install -f
-2. Create .env file (based on .env.example): ./.env
-```
+```git clone https://github.com/Gemer31/nodejs2024Q3-service.git```
 
 ## Running application
 
-```
-npm start
-```
+1. Create **.env** file based on **.env.sample**(just rename .env.sample => .env).
+2. Use Docker Compose to run the application: ``npm run docker:up``.
+Use http://localhost:4000/api (port 4000 it is a default application port in .env) to work with application api.
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
-For more information about OpenAPI/Swagger please visit https://swagger.io/.
+## Stop application
+
+To stop containers without their deletion: ``npm run docker:stop``.
+To stop containers with deletion images, containers and volumes: ``npm run docker:down:all``.
+
+Also you can use Docker Desktop to manage containers, images and volumes.
 
 ## Testing
 
-After application running open new terminal and enter:
+For testing API use command: ``npm run test``.
 
-To run all tests without authorization
+![test-check](assets/test-check.png)
 
-```
-npm run test
-```
+**NOTE!:** Application has to be run
 
-To run only one of all test suites
+## Docker hub images
 
 ```
-npm run test -- <path to suite>
+romashok31/nodejs2024-nest-app:latest
+romashok31/nodejs2024-postgres-db:latest
 ```
 
-To run all test with authorization
+![test results](assets/app-image-size.png)
+![test results](assets/db-image-size.png)
 
-```
-npm run test:auth
-```
+## Docker security check
 
-To run only specific test suite with authorization
+Scripts to check Docker images for vulnerabilities:
 
-```
-npm run test:auth -- <path to suite>
-```
+``npm run docker:scout:app (application image)``<br>
+``npm run docker:scout:db (database image)``
 
 ### Auto-fix and format
 
-```
-npm run lint
-```
+``npm run lint``
 
-```
-npm run format
-```
+``npm run format``
 
 ### Debugging in VSCode
 
