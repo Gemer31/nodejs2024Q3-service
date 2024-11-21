@@ -14,7 +14,7 @@ import { ArtistService } from '../services/artist.service';
 import { IdDto } from '../dto/common.dto';
 import { MessageHelper } from '../helpers/message.helper';
 import {
-  ApiBadRequestResponse,
+  ApiBadRequestResponse, ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -27,6 +27,7 @@ import {
 import { StatusCodes } from 'http-status-codes';
 import { SwaggerExamples } from '../helpers/swagger.helper';
 
+@ApiBearerAuth()
 @Controller('favs')
 export class FavouritesController {
   constructor(

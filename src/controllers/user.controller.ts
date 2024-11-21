@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -7,156 +8,61 @@ import {
   Param,
   Post,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
-import {
-  CreateUserDto,
-  UpdatePasswordDto,
-  UserResponseDto,
-} from '../dto/user.dto';
+import { CreateUserDto, UpdatePasswordDto, UserDto } from '../dto/user.dto';
 import { IdDto } from '../dto/common.dto';
 import { StatusCodes } from 'http-status-codes';
-import {
-  ApiBadRequestResponse,
-  ApiCreatedResponse,
-  ApiForbiddenResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { SwaggerExamples } from '../helpers/swagger.helper';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiCreateUserOperation } from '../decorators/api-create-user-operation.decorator';
+import { ApiGetUserOperation } from '../decorators/api-get-user-operation.decorator';
+import { ApiUpdateUserOperation } from '../decorators/api-update-user-operation.decorator';
+import { ApiDeleteUserOperation } from '../decorators/api-delete-user-operation.decorator';
+import { ApiGetUsersOperation } from '../decorators/api-get-all-users-operation.decorator';
 
+@ApiBearerAuth('access-token')
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @ApiOperation({
-    summary: 'Get all users',
-    description: 'Get all users',
-  })
-  @ApiOkResponse({
-    description: 'Successful operation',
-    example: SwaggerExamples.USERS,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
+  @ApiGetUsersOperation()
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async getAll() {
     const users = await this.userService.getAll();
-    return users.map((user) => this.userService.getUserResponseDto(user));
+    return users.map((user) => new UserDto(user));
   }
 
-  @ApiOperation({
-    summary: 'Get single user by id',
-    description: 'Get single user by id',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiOkResponse({
-    description: 'Successful operation',
-    example: SwaggerExamples.USER,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. userId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'user was not found',
-  })
+  @ApiGetUserOperation()
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   async get(@Param() { id }: IdDto) {
     const user = await this.userService.get(id);
-    return this.userService.getUserResponseDto(user);
+    return new UserDto(user);
   }
 
-  @ApiOperation({
-    summary: 'Add new user',
-    description: 'Add new user',
-  })
-  @ApiCreatedResponse({
-    description: 'user is created',
-    example: SwaggerExamples.USER,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. body does not contain required fields',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
+  @ApiCreateUserOperation()
+  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   async create(@Body() body: CreateUserDto) {
     const user = await this.userService.create(body);
-    return this.userService.getUserResponseDto(user);
+    return new UserDto(user);
   }
 
-  @ApiOperation({
-    summary: 'Update user password',
-    description: 'Update user password by UUID',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiOkResponse({
-    description: 'The user has been updated.',
-    example: SwaggerExamples.USER,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. userId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiForbiddenResponse({
-    description: 'oldPassword is wrong',
-  })
-  @ApiNotFoundResponse({
-    description: 'user was not found',
-  })
+  @ApiUpdateUserOperation()
+  @UseInterceptors(ClassSerializerInterceptor)
   @Put(':id')
   async update(
     @Param() { id }: IdDto,
     @Body() body: UpdatePasswordDto,
-  ): Promise<UserResponseDto> {
-    await this.userService.get(id);
-    const user = await this.userService.updatePassword(id, body);
-    return this.userService.getUserResponseDto(user);
+  ): Promise<UserDto> {
+    const user = await this.userService.get(id);
+    const updateUser = await this.userService.updatePassword(user.id, body);
+    return new UserDto(updateUser);
   }
 
-  @ApiOperation({
-    summary: 'Delete user',
-    description: 'Delete user from library',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiNoContentResponse({
-    description: 'Deleted successfully',
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. UserId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'user was not found',
-  })
+  @ApiDeleteUserOperation()
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async delete(@Param() { id }: IdDto): Promise<string> {

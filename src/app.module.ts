@@ -10,14 +10,28 @@ import { AlbumService } from './services/album.service';
 import { FavouritesController } from './controllers/favorites.controller';
 import { FavoriteService } from './services/favorite.service';
 import { PrismaService } from './services/prisma.service';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthService } from './services/auth.service';
+import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule } from '@nestjs/config';
+import configuration from './config/configuration';
+import { AuthGuard } from './guards/auth.guard';
+import { AuthController } from './controllers/auth.controller';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [configuration],
+    }),
+    JwtModule,
+  ],
   controllers: [
+    AuthController,
+    UserController,
+    TrackController,
     AlbumController,
     ArtistController,
-    TrackController,
-    UserController,
     FavouritesController,
   ],
   providers: [
@@ -27,6 +41,11 @@ import { PrismaService } from './services/prisma.service';
     UserService,
     FavoriteService,
     PrismaService,
+    AuthService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
   ],
 })
 export class AppModule {}

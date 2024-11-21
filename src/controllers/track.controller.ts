@@ -13,7 +13,7 @@ import { CreateTrackDto, TrackDto, UpdateTrackDto } from '../dto/track.dto';
 import { TrackService } from '../services/track.service';
 import { MessageHelper } from '../helpers/message.helper';
 import {
-  ApiBadRequestResponse,
+  ApiBadRequestResponse, ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -25,6 +25,7 @@ import {
 import { SwaggerExamples } from '../helpers/swagger.helper';
 import { StatusCodes } from 'http-status-codes';
 
+@ApiBearerAuth()
 @Controller('track')
 export class TrackController {
   constructor(private trackService: TrackService) {}

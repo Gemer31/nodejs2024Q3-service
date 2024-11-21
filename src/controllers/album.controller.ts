@@ -14,6 +14,7 @@ import { AlbumService } from '../services/album.service';
 import { AlbumDto, CreateAlbumDto } from '../dto/album.dto';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -25,6 +26,7 @@ import {
 import { SwaggerExamples } from '../helpers/swagger.helper';
 import { StatusCodes } from 'http-status-codes';
 
+@ApiBearerAuth()
 @Controller('album')
 export class AlbumController {
   constructor(private albumService: AlbumService) {}

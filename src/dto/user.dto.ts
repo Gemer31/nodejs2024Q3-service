@@ -1,9 +1,11 @@
 import { IsNumber, IsString } from 'class-validator';
 import { IdDto } from './common.dto';
-import { ApiExtraModels, ApiProperty, ApiSchema } from "@nestjs/swagger";
+import { ApiProperty, ApiSchema } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
+import { User } from '@prisma/client';
 
 @ApiSchema({ name: 'User' })
-export class UserResponseDto extends IdDto {
+export class UserDto extends IdDto {
   @ApiProperty()
   @IsString()
   login: string;
@@ -13,12 +15,28 @@ export class UserResponseDto extends IdDto {
   version: number;
 
   @ApiProperty()
+  @IsString()
+  @Exclude()
+  password: string;
+
+  @ApiProperty()
   @IsNumber()
   createdAt: number;
 
   @ApiProperty()
   @IsNumber()
   updatedAt: number;
+
+  constructor(user: User) {
+    super();
+
+    this.id = user.id;
+    this.login = user.login;
+    this.password = user.password;
+    this.version = user.version;
+    this.createdAt = +user.createdAt;
+    this.updatedAt = +user.updatedAt;
+  }
 }
 
 @ApiSchema({ name: 'CreateUser' })
@@ -41,4 +59,17 @@ export class UpdatePasswordDto {
   @ApiProperty()
   @IsString()
   newPassword: string;
+}
+
+export class AuthUserDto {
+  @ApiProperty({ description: "The user's login", required: true })
+  login: string;
+
+  @ApiProperty({ description: "The user's password", required: true })
+  password: string;
+}
+
+export class RefreshTokenDto {
+  @ApiProperty({ description: 'Refresh token', required: true })
+  refreshToken: string;
 }
