@@ -1,4 +1,5 @@
 import {
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -6,6 +7,7 @@ import {
   Param,
   Post,
   UnprocessableEntityException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { FavoriteService } from '../services/favorite.service';
 import { TrackService } from '../services/track.service';
@@ -13,41 +15,25 @@ import { AlbumService } from '../services/album.service';
 import { ArtistService } from '../services/artist.service';
 import { IdDto } from '../dto/common.dto';
 import { MessageHelper } from '../helpers/message.helper';
-import {
-  ApiBadRequestResponse, ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiUnauthorizedResponse,
-  ApiUnprocessableEntityResponse,
-} from '@nestjs/swagger';
 import { StatusCodes } from 'http-status-codes';
 import { SwaggerExamples } from '../helpers/swagger.helper';
+import { ApiGetAllOperation } from '../decorators/api-operations/api-get-all-response.decorator';
+import { ApiAddOperation } from '../decorators/api-operations/api-create-operation.decorator';
+import { ApiDeleteOperation } from '../decorators/api-operations/api-delete-operation.decorator';
 
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @Controller('favs')
+@UseInterceptors(ClassSerializerInterceptor)
 export class FavouritesController {
   constructor(
     private favoriteService: FavoriteService,
     private trackService: TrackService,
     private albumService: AlbumService,
     private artistService: ArtistService,
-  ) {}
+  ) {
+  }
 
-  @ApiOperation({
-    summary: 'Get all favorites',
-    description: 'Gets all favorites movies, tracks and books',
-  })
-  @ApiOkResponse({
-    description: 'Successful operation',
-    example: SwaggerExamples.FAVORITES,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
+  @ApiGetAllOperation('Favorites')
   @Get()
   async getAll() {
     const favorites = await this.favoriteService.get();
@@ -65,29 +51,7 @@ export class FavouritesController {
     return { tracks, albums, artists };
   }
 
-  @ApiOperation({
-    summary: 'Add track to the favorites',
-    description: 'Add track to the favorites',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiCreatedResponse({
-    description: 'Added successfully',
-    example: SwaggerExamples.TRACK,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. TrackId is invalid',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiUnprocessableEntityResponse({
-    description: 'Track with id doesnt exist',
-  })
+  @ApiAddOperation('Track', SwaggerExamples.TRACK)
   @Post('track/:id')
   async addTrack(@Param() { id }: IdDto) {
     const track = await this.trackService.get(id, false);
@@ -101,28 +65,7 @@ export class FavouritesController {
     return track;
   }
 
-  @ApiOperation({
-    summary: 'Delete track from favorites',
-    description: 'Delete track from favorites',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiNoContentResponse({
-    description: 'Deleted successfully',
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. TrackId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'Track was not found',
-  })
+  @ApiDeleteOperation('Track')
   @Delete('track/:id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async deleteTrack(@Param() { id }: IdDto): Promise<string> {
@@ -132,29 +75,7 @@ export class FavouritesController {
     return MessageHelper.deleteSuccessfully('Track');
   }
 
-  @ApiOperation({
-    summary: 'Add album to the favorites',
-    description: 'Add album to the favorites',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiCreatedResponse({
-    description: 'Added successfully',
-    example: SwaggerExamples.ALBUM,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. AlbumId is invalid',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiUnprocessableEntityResponse({
-    description: 'Album with id doesnt exist',
-  })
+  @ApiAddOperation('Album', SwaggerExamples.ALBUM)
   @Post('album/:id')
   async addAlbum(@Param() { id }: IdDto) {
     const album = await this.albumService.get(id, false);
@@ -168,28 +89,7 @@ export class FavouritesController {
     return album;
   }
 
-  @ApiOperation({
-    summary: 'Delete album from favorites',
-    description: 'Delete album from favorites',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiNoContentResponse({
-    description: 'Deleted successfully',
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. AlbumId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'Album was not found',
-  })
+  @ApiDeleteOperation('Album')
   @Delete('album/:id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async deleteAlbum(@Param() { id }: IdDto): Promise<string> {
@@ -199,29 +99,7 @@ export class FavouritesController {
     return MessageHelper.deleteSuccessfully('Album');
   }
 
-  @ApiOperation({
-    summary: 'Add artist to the favorites',
-    description: 'Add artist to the favorites',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiCreatedResponse({
-    description: 'Added successfully',
-    example: SwaggerExamples.ARTIST,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. ArtistId is invalid',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiUnprocessableEntityResponse({
-    description: 'Artist with id doesnt exist',
-  })
+  @ApiAddOperation('Artist', SwaggerExamples.ARTIST)
   @Post('artist/:id')
   async addArtist(@Param() { id }: IdDto) {
     const artist = await this.artistService.get(id, false);
@@ -235,28 +113,7 @@ export class FavouritesController {
     return artist;
   }
 
-  @ApiOperation({
-    summary: 'Delete artist from favorites',
-    description: 'Delete artist from favorites',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiNoContentResponse({
-    description: 'Deleted successfully',
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. artistId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'Artist was not found',
-  })
+  @ApiDeleteOperation('Artist')
   @Delete('artist/:id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async deleteArtist(@Param() { id }: IdDto): Promise<string> {

@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
 
     if (isPublicHandler) return true;
 
-    const [token] = request.headers.authorization?.split(' ') ?? [];
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
     // const token = type === 'Bearer' ? token : undefined;
 
     if (!token) throw new UnauthorizedException();

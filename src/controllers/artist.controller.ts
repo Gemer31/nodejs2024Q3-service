@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -7,116 +8,46 @@ import {
   Param,
   Post,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { IdDto } from '../dto/common.dto';
 import { MessageHelper } from '../helpers/message.helper';
 import { ArtistService } from '../services/artist.service';
 import { ArtistDto, CreateArtistDto } from '../dto/artist.dto';
 import { StatusCodes } from 'http-status-codes';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
 import { SwaggerExamples } from '../helpers/swagger.helper';
+import { ApiGetAllOperation } from '../decorators/api-operations/api-get-all-response.decorator';
+import { ApiUpdateOperation } from '../decorators/api-operations/api-update-operation.decorator';
+import { ApiDeleteOperation } from '../decorators/api-operations/api-delete-operation.decorator';
+import { ApiAddOperation } from '../decorators/api-operations/api-create-operation.decorator';
+import { ApiGetSingleOperation } from '../decorators/api-operations/api-get-single-operation.decorator';
 
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @Controller('artist')
+@UseInterceptors(ClassSerializerInterceptor)
 export class ArtistController {
-  constructor(private artistService: ArtistService) {}
+  constructor(private artistService: ArtistService) {
+  }
 
-  @ApiOperation({
-    summary: 'Get all artists',
-    description: 'Get all artists',
-  })
-  @ApiOkResponse({
-    description: 'Successful operation',
-    example: SwaggerExamples.ARTISTS,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
+  @ApiGetAllOperation('Artists')
   @Get()
   getAll(): Promise<ArtistDto[]> {
     return this.artistService.getAll();
   }
 
-  @ApiOperation({
-    summary: 'Get single artist by id',
-    description: 'Get single artist by id',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiOkResponse({
-    description: 'Successful operation',
-    example: SwaggerExamples.ARTIST,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. artistId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'Artist was not found',
-  })
+  @ApiGetSingleOperation('Artist', SwaggerExamples.USER)
   @Get(':id')
   async get(@Param() { id }: IdDto): Promise<ArtistDto> {
     return this.artistService.get(id);
   }
 
-  @ApiOperation({
-    summary: 'Add new artist',
-    description: 'Add new artist',
-  })
-  @ApiCreatedResponse({
-    description: 'Artist is created',
-    example: SwaggerExamples.ARTIST,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. body does not contain required fields',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
+  @ApiAddOperation('Artist', SwaggerExamples.USER)
   @Post()
   create(@Body() body: CreateArtistDto): Promise<ArtistDto> {
     return this.artistService.create(body);
   }
 
-  @ApiOperation({
-    summary: 'Update artist information',
-    description: 'Update artist information by UUID',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiOkResponse({
-    description: 'The artist has been updated.',
-    example: SwaggerExamples.ARTIST,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. artistId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'Artist was not found',
-  })
+  @ApiUpdateOperation('Artist', SwaggerExamples.USER)
   @Put(':id')
   update(
     @Param() { id }: IdDto,
@@ -125,28 +56,7 @@ export class ArtistController {
     return this.artistService.update(id, body);
   }
 
-  @ApiOperation({
-    summary: 'Delete artist',
-    description: 'Delete artist from library',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiNoContentResponse({
-    description: 'Deleted successfully',
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. artistId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'Artist was not found',
-  })
+  @ApiDeleteOperation('Artist')
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async delete(@Param() { id }: IdDto): Promise<string> {

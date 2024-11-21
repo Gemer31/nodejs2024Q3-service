@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TrackDto, UpdateTrackDto } from '../dto/track.dto';
+import { UpdateTrackDto } from '../dto/track.dto';
 import { PrismaService } from './prisma.service';
 import { MessageHelper } from '../helpers/message.helper';
+import { Track } from '@prisma/client';
 
 @Injectable()
 export class TrackService {
@@ -10,8 +11,8 @@ export class TrackService {
   public async getAll(params?: {
     ids?: string[];
     albumId?: string;
-  }): Promise<TrackDto[]> {
-    let tracks;
+  }): Promise<Track[]> {
+    let tracks: Track[];
 
     if (params?.albumId !== undefined) {
       tracks = await this.prisma.track.findMany({
@@ -29,38 +30,37 @@ export class TrackService {
       tracks = await this.prisma.track.findMany();
     }
 
-    return tracks as TrackDto[];
+    return tracks;
   }
 
-  public async get(id: string, throwErr = true): Promise<TrackDto> {
+  public async get(id: string, throwErr = true): Promise<Track> {
     const track = await this.prisma.track.findUnique({
       where: { id },
     });
     if (!track && throwErr) {
       throw new NotFoundException(MessageHelper.entityNotFound('Track', id));
     }
-    return track as TrackDto;
+    return track;
   }
 
-  public async create(data) {
-    const track = await this.prisma.track.create({ data });
-    return track as TrackDto;
+  public async create(data): Promise<Track> {
+    return this.prisma.track.create({ data });
   }
 
-  public async update(id: string, data: UpdateTrackDto) {
+  public async update(id: string, data: UpdateTrackDto): Promise<Track> {
     let track = await this.get(id);
     track = await this.prisma.track.update({
       where: { id },
       data: { ...track, ...data },
     });
-    return track as TrackDto;
+    return track;
   }
 
-  public async delete(id: string): Promise<TrackDto> {
+  public async delete(id: string): Promise<Track> {
     let track = await this.get(id);
     track = await this.prisma.track.delete({
       where: { id: track.id },
     });
-    return track as TrackDto;
+    return track;
   }
 }

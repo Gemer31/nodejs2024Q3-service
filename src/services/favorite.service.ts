@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { IFavorites } from '../models/favorites.model';
 import { PrismaService } from './prisma.service';
+import { Favorites } from '@prisma/client';
 
 @Injectable()
 export class FavoriteService {
   constructor(private prisma: PrismaService) {}
 
-  public async get(): Promise<IFavorites> {
-    let favs = await this.prisma.favorites.findFirst();
+  public async get(): Promise<Favorites> {
+    let favs: Favorites = await this.prisma.favorites.findFirst();
 
     if (!favs) {
       favs = await this.prisma.favorites.create({

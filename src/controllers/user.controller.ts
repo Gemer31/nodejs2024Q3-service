@@ -14,44 +14,41 @@ import { UserService } from '../services/user.service';
 import { CreateUserDto, UpdatePasswordDto, UserDto } from '../dto/user.dto';
 import { IdDto } from '../dto/common.dto';
 import { StatusCodes } from 'http-status-codes';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { ApiCreateUserOperation } from '../decorators/api-create-user-operation.decorator';
-import { ApiGetUserOperation } from '../decorators/api-get-user-operation.decorator';
-import { ApiUpdateUserOperation } from '../decorators/api-update-user-operation.decorator';
-import { ApiDeleteUserOperation } from '../decorators/api-delete-user-operation.decorator';
-import { ApiGetUsersOperation } from '../decorators/api-get-all-users-operation.decorator';
+import { ApiGetSingleOperation } from '../decorators/api-operations/api-get-single-operation.decorator';
+import { SwaggerExamples } from '../helpers/swagger.helper';
+import { ApiAddOperation } from '../decorators/api-operations/api-create-operation.decorator';
+import { ApiDeleteOperation } from '../decorators/api-operations/api-delete-operation.decorator';
+import { ApiUpdateOperation } from '../decorators/api-operations/api-update-operation.decorator';
+import { ApiGetAllOperation } from '../decorators/api-operations/api-get-all-response.decorator';
 
-@ApiBearerAuth('access-token')
 @Controller('user')
+@UseInterceptors(ClassSerializerInterceptor)
+// @ApiBearerAuth('access-token')
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @ApiGetUsersOperation()
-  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiGetAllOperation('Users')
   @Get()
   async getAll() {
     const users = await this.userService.getAll();
     return users.map((user) => new UserDto(user));
   }
 
-  @ApiGetUserOperation()
-  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiGetSingleOperation('User', SwaggerExamples.USER)
   @Get(':id')
   async get(@Param() { id }: IdDto) {
     const user = await this.userService.get(id);
     return new UserDto(user);
   }
 
-  @ApiCreateUserOperation()
-  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiAddOperation('User', SwaggerExamples.USER)
   @Post()
   async create(@Body() body: CreateUserDto) {
     const user = await this.userService.create(body);
     return new UserDto(user);
   }
 
-  @ApiUpdateUserOperation()
-  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiUpdateOperation('User', SwaggerExamples.USER)
   @Put(':id')
   async update(
     @Param() { id }: IdDto,
@@ -62,7 +59,7 @@ export class UserController {
     return new UserDto(updateUser);
   }
 
-  @ApiDeleteUserOperation()
+  @ApiDeleteOperation('User')
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async delete(@Param() { id }: IdDto): Promise<string> {

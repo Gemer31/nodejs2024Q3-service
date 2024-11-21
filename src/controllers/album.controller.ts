@@ -1,5 +1,6 @@
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -7,146 +8,55 @@ import {
   Param,
   Post,
   Put,
+  UseInterceptors,
 } from '@nestjs/common';
 import { IdDto } from '../dto/common.dto';
 import { MessageHelper } from '../helpers/message.helper';
 import { AlbumService } from '../services/album.service';
-import { AlbumDto, CreateAlbumDto } from '../dto/album.dto';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiNoContentResponse,
-  ApiNotFoundResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiParam,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
-import { SwaggerExamples } from '../helpers/swagger.helper';
+import { CreateAlbumDto } from '../dto/album.dto';
 import { StatusCodes } from 'http-status-codes';
+import { ApiGetAllOperation } from '../decorators/api-operations/api-get-all-response.decorator';
+import { ApiAddOperation } from '../decorators/api-operations/api-create-operation.decorator';
+import { SwaggerExamples } from '../helpers/swagger.helper';
+import { ApiGetSingleOperation } from '../decorators/api-operations/api-get-single-operation.decorator';
+import { ApiUpdateOperation } from '../decorators/api-operations/api-update-operation.decorator';
+import { ApiDeleteOperation } from '../decorators/api-operations/api-delete-operation.decorator';
 
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @Controller('album')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AlbumController {
-  constructor(private albumService: AlbumService) {}
+  constructor(private albumService: AlbumService) {
+  }
 
-  @ApiOperation({
-    summary: 'Get albums list',
-    description: 'Gets all library albums list',
-  })
-  @ApiOkResponse({
-    description: 'Successful operation',
-    example: SwaggerExamples.ALBUMS,
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
+  @ApiGetAllOperation('Albums')
   @Get()
   getAll() {
     return this.albumService.getAll();
   }
 
-  @ApiOperation({
-    summary: 'Get single album by id',
-    description: 'Gets single album by id',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiOkResponse({
-    description: 'Successful operation',
-    example: SwaggerExamples.ALBUM,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. albumId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'Album was not found',
-  })
+  @ApiGetSingleOperation('Album', SwaggerExamples.ALBUM)
   @Get(':id')
-  async get(@Param() { id }: IdDto): Promise<AlbumDto> {
+  async get(@Param() { id }: IdDto) {
     return this.albumService.get(id);
   }
 
-  @ApiOperation({
-    summary: 'Add new album',
-    description: 'Add new album information',
-  })
-  @ApiCreatedResponse({
-    description: 'Album is created',
-    example: SwaggerExamples.ALBUM,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. body does not contain required fields',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
+  @ApiAddOperation('Album', SwaggerExamples.ALBUM)
   @Post()
   create(@Body() body: CreateAlbumDto) {
     return this.albumService.create(body);
   }
 
-  @ApiOperation({
-    summary: 'Update album information',
-    description: 'Update library album information by UUID',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiOkResponse({
-    description: 'The album has been updated.',
-    example: SwaggerExamples.ALBUM,
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. albumId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'Album was not found',
-  })
+  @ApiUpdateOperation('Album', SwaggerExamples.ALBUM)
   @Put(':id')
   update(
     @Param() { id }: IdDto,
     @Body() body: CreateAlbumDto,
-  ): Promise<AlbumDto> {
+  ) {
     return this.albumService.update(id, body);
   }
 
-  @ApiOperation({
-    summary: 'Delete album',
-    description: 'Delete album from library',
-  })
-  @ApiParam({
-    name: 'id',
-    type: 'string',
-    format: 'uuid',
-    required: true,
-  })
-  @ApiNoContentResponse({
-    description: 'Deleted successfully',
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request. albumId is invalid (not uuid)',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Access token is missing or invalid',
-  })
-  @ApiNotFoundResponse({
-    description: 'Album was not found',
-  })
+  @ApiDeleteOperation('Album')
   @Delete(':id')
   @HttpCode(StatusCodes.NO_CONTENT)
   async delete(@Param() { id }: IdDto): Promise<string> {

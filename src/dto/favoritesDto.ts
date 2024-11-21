@@ -1,17 +1,15 @@
 import { IsArray } from 'class-validator';
-import { ArtistDto } from './artist.dto';
-import { AlbumDto } from './album.dto';
-import { TrackDto } from './track.dto';
-import { ApiSchema } from "@nestjs/swagger";
+import { ApiSchema } from '@nestjs/swagger';
+import { Album, Artist, Track } from '@prisma/client';
 
 @ApiSchema({ name: 'Favorites' })
 export class FavoritesDto {
   @IsArray()
-  artists: ArtistDto[];
+  artists: Artist[];
 
   @IsArray()
-  albums: AlbumDto[];
+  albums: Album[];
 
   @IsArray()
-  tracks: TrackDto[];
+  tracks: Track[];
 }

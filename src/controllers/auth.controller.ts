@@ -13,17 +13,17 @@ import {
   RefreshTokenDto,
   UserDto,
 } from '../dto/user.dto';
-import { ApiLoginOperation } from '../decorators/api-login.operation';
+import { ApiLoginOperationDecorator } from '../decorators/api-operations/api-login-operation.decorator';
 import { TokensDto } from '../dto/tokens.dto';
-import { ApiRefreshTokensOperation } from '../decorators/api-refresh-tokens.operation';
+import { ApiRefreshTokensOperationDecorator } from '../decorators/api-operations/api-refresh-tokens-operation.decorator';
 import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @PublicHandler()
-  @UseInterceptors(ClassSerializerInterceptor)
   @Post('signup')
   async signup(@Body() createUserDto: CreateUserDto): Promise<UserDto> {
     const user = await this.authService.signup(createUserDto);
@@ -31,15 +31,13 @@ export class AuthController {
   }
 
   @PublicHandler()
-  @UseInterceptors(ClassSerializerInterceptor)
-  @ApiLoginOperation(['auth'])
+  @ApiLoginOperationDecorator(['auth'])
   @Post('login')
   async login(@Body() authUserDto: AuthUserDto): Promise<TokensDto> {
     return await this.authService.login(authUserDto);
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
-  @ApiRefreshTokensOperation(['auth'])
+  @ApiRefreshTokensOperationDecorator(['auth'])
   @Post('refresh')
   async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<TokensDto> {
     return await this.authService.refresh(refreshTokenDto);

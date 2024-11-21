@@ -1,5 +1,5 @@
 import { ApiUnauthorizedResponse } from '@nestjs/swagger';
 
-export const ApiUnauthorizedResponseCustom = ApiUnauthorizedResponse({
+export const ApiCustomUnauthorizedResponseDecorator = ApiUnauthorizedResponse({
   description: 'Access token is missing or invalid',
 });
