@@ -16,6 +16,7 @@ import {
 import { ApiLoginOperationDecorator } from '../decorators/api-operations/api-login-operation.decorator';
 import { TokensDto } from '../dto/tokens.dto';
 import { ApiRefreshTokensOperationDecorator } from '../decorators/api-operations/api-refresh-tokens-operation.decorator';
+import { ApiBearerAuth } from "@nestjs/swagger";
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -36,6 +37,7 @@ export class AuthController {
     return await this.authService.login(authUserDto);
   }
 
+  @ApiBearerAuth('access-token')
   @ApiRefreshTokensOperationDecorator()
   @Post('refresh')
   async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<TokensDto> {
