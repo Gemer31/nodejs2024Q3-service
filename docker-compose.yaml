@@ -1,0 +1,55 @@
+services:
+  nest-app:
+    container_name: nest_app-container
+    #image: romashok31/nodejs2024-nest-app:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-app
+    restart: always
+    networks:
+      - user-defined
+    env_file: .env
+    ports:
+      - '${NEST_APP_PORT}:${NEST_APP_PORT}'
+    expose:
+      - ${NEST_APP_PORT}
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    stdin_open: true
+    volumes:
+      - .:/app
+      - node-modules:/app/node_modules
+
+  postgres-db:
+    container_name: postgres-container
+    #image: romashok31/nodejs2024-postgres-db:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-db
+    restart: always
+    networks:
+      - user-defined
+    env_file: .env
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    expose:
+      - ${POSTGRES_PORT}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      start_period: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - db_logs:/var/log/postgresql
+
+volumes:
+  db_data:
+  db_logs:
+  node-modules:
+
+networks:
+  user-defined:
+    driver: bridge
