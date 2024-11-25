@@ -3,6 +3,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ConfigService } from '@nestjs/config';
 
+const BITES_IN_KB = 1024;
+const DEFAULT_LOG_FILE_SIZE_IN_BITES = 51200;
+
 @Injectable()
 export class LoggingService extends ConsoleLogger {
   private static logFilePath = path.join(__dirname, '../../logs/app.log');
@@ -20,22 +23,23 @@ export class LoggingService extends ConsoleLogger {
 
     if (LoggingService.maxFileSize === undefined) {
       LoggingService.maxFileSize =
-        parseInt(configService.get('LOG_MAX_SIZE_KB'), 10) * 1024 || 51200;
+        parseInt(configService.get('LOG_MAX_SIZE_KB'), 10) * BITES_IN_KB || DEFAULT_LOG_FILE_SIZE_IN_BITES;
 
-      LoggingService.configLogLevel = this.mapLevelToNumber(
+      LoggingService.configLogLevel = this.getLogLevel(
         configService.get('LOG_LEVEL'),
       );
 
       LoggingService.currentLogSize = this.getFileSize(
         LoggingService.logFilePath,
       );
+
       LoggingService.currentErrorLogSize = this.getFileSize(
         LoggingService.errLogFilePath,
       );
     }
   }
 
-  private mapLevelToNumber(level: string): number {
+  private getLogLevel(level: string): number {
     switch (level.toLowerCase()) {
       case 'error':
       case '0':
@@ -97,9 +101,8 @@ export class LoggingService extends ConsoleLogger {
   }
 
   private writeToFile(lvl: string, msg: string, filePath: string): void {
-    const formattedMessage = `${new Date().toISOString()} [${lvl}] ${msg}\n`;
     this.rotateLogFileIfNeeded(filePath);
-    fs.appendFileSync(filePath, formattedMessage);
+    fs.appendFileSync(filePath, `${new Date().toISOString()} [${lvl}] ${msg}\n`);
   }
 
   private getFileSize(filePath: string): number {
@@ -120,7 +123,9 @@ export class LoggingService extends ConsoleLogger {
 
   private rotateFile(filePath: string): void {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const rotatedFilePath = `${filePath}.${timestamp}`;
-    fs.renameSync(filePath, rotatedFilePath);
+    fs.renameSync(
+      filePath,
+      `${filePath}.${timestamp}`
+    );
   }
 }
