@@ -2,6 +2,7 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  HttpCode,
   Post,
   UseInterceptors,
 } from '@nestjs/common';
@@ -16,7 +17,7 @@ import {
 import { ApiLoginOperationDecorator } from '../decorators/api-operations/api-login-operation.decorator';
 import { TokensDto } from '../dto/tokens.dto';
 import { ApiRefreshTokensOperationDecorator } from '../decorators/api-operations/api-refresh-tokens-operation.decorator';
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { StatusCodes } from 'http-status-codes';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -37,7 +38,8 @@ export class AuthController {
     return await this.authService.login(authUserDto);
   }
 
-  @ApiBearerAuth('access-token')
+  @PublicHandler()
+  @HttpCode(StatusCodes.OK)
   @ApiRefreshTokensOperationDecorator()
   @Post('refresh')
   async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<TokensDto> {

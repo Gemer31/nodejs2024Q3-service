@@ -5,11 +5,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import {
-  AuthUserDto,
-  CreateUserDto,
-  RefreshTokenDto,
-} from '../dto/user.dto';
+import { AuthUserDto, CreateUserDto, RefreshTokenDto } from '../dto/user.dto';
 import { TokensDto } from '../dto/tokens.dto';
 import { hashSync, compareSync } from 'bcrypt';
 import { UserService } from './user.service';
@@ -50,11 +46,14 @@ export class AuthService {
     }
 
     try {
-      const IJwtVerify: IJwtVerify = this.jwtService.verify(refreshToken, {
-        secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
-      });
+      const { userId, login }: IJwtVerify = this.jwtService.verify(
+        refreshToken,
+        {
+          secret: this.configService.get('JWT_SECRET_REFRESH_KEY'),
+        },
+      );
 
-      return this.getTokens(IJwtVerify);
+      return this.getTokens({ userId, login });
     } catch {
       throw new ForbiddenException('Refresh token is invalid or expired');
     }
