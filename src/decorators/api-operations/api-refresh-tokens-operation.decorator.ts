@@ -1,13 +1,16 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiForbiddenResponse, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { ApiCustomUnauthorizedResponseDecorator } from '../api-responses/api-custom-unauthorized-response.decorator';
 
-export const ApiRefreshTokensOperationDecorator = (tags: string[]) => {
+export const ApiRefreshTokensOperationDecorator = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'Refresh tokens',
-      description: 'Returns a new pair of access and refresh tokens',
-      tags,
+      description: 'Returns new access and refresh tokens',
     }),
     ApiOkResponse({
       description: 'Operation successful',

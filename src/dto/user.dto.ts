@@ -1,10 +1,9 @@
 import { IsNumber, IsString } from 'class-validator';
 import { IdDto } from './common.dto';
-import { ApiProperty, ApiSchema } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { User } from '@prisma/client';
 
-@ApiSchema({ name: 'User' })
 export class UserDto extends IdDto {
   @ApiProperty()
   @IsString()
@@ -39,7 +38,6 @@ export class UserDto extends IdDto {
   }
 }
 
-@ApiSchema({ name: 'CreateUser' })
 export class CreateUserDto {
   @ApiProperty()
   @IsString()
@@ -50,7 +48,6 @@ export class CreateUserDto {
   password: string;
 }
 
-@ApiSchema({ name: 'UpdatePassword' })
 export class UpdatePasswordDto {
   @ApiProperty()
   @IsString()

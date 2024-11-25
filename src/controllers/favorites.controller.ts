@@ -20,8 +20,9 @@ import { SwaggerExamples } from '../helpers/swagger.helper';
 import { ApiGetAllOperation } from '../decorators/api-operations/api-get-all-response.decorator';
 import { ApiAddOperation } from '../decorators/api-operations/api-create-operation.decorator';
 import { ApiDeleteOperation } from '../decorators/api-operations/api-delete-operation.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
-// @ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @Controller('favs')
 @UseInterceptors(ClassSerializerInterceptor)
 export class FavouritesController {
@@ -30,8 +31,7 @@ export class FavouritesController {
     private trackService: TrackService,
     private albumService: AlbumService,
     private artistService: ArtistService,
-  ) {
-  }
+  ) {}
 
   @ApiGetAllOperation('Favorites')
   @Get()

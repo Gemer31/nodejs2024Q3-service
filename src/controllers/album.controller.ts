@@ -21,13 +21,13 @@ import { SwaggerExamples } from '../helpers/swagger.helper';
 import { ApiGetSingleOperation } from '../decorators/api-operations/api-get-single-operation.decorator';
 import { ApiUpdateOperation } from '../decorators/api-operations/api-update-operation.decorator';
 import { ApiDeleteOperation } from '../decorators/api-operations/api-delete-operation.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
-// @ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @Controller('album')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AlbumController {
-  constructor(private albumService: AlbumService) {
-  }
+  constructor(private albumService: AlbumService) {}
 
   @ApiGetAllOperation('Albums')
   @Get()
@@ -49,10 +49,7 @@ export class AlbumController {
 
   @ApiUpdateOperation('Album', SwaggerExamples.ALBUM)
   @Put(':id')
-  update(
-    @Param() { id }: IdDto,
-    @Body() body: CreateAlbumDto,
-  ) {
+  update(@Param() { id }: IdDto, @Body() body: CreateAlbumDto) {
     return this.albumService.update(id, body);
   }
 

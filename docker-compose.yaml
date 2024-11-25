@@ -21,14 +21,8 @@ services:
         condition: service_healthy
     stdin_open: true
     volumes:
+      - .:/app
       - node-modules:/app/node_modules
-    develop:
-      watch:
-        - action: rebuild
-          path: ./src
-          target: .
-          ignore:
-            - node_modules
 
   postgres-db:
     container_name: postgres-container

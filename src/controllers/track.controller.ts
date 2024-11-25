@@ -21,8 +21,9 @@ import { ApiUpdateOperation } from '../decorators/api-operations/api-update-oper
 import { ApiAddOperation } from '../decorators/api-operations/api-create-operation.decorator';
 import { ApiGetSingleOperation } from '../decorators/api-operations/api-get-single-operation.decorator';
 import { ApiGetAllOperation } from '../decorators/api-operations/api-get-all-response.decorator';
+import { ApiBearerAuth } from "@nestjs/swagger";
 
-// @ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @Controller('track')
 @UseInterceptors(ClassSerializerInterceptor)
 export class TrackController {

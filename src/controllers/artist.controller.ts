@@ -21,13 +21,13 @@ import { ApiUpdateOperation } from '../decorators/api-operations/api-update-oper
 import { ApiDeleteOperation } from '../decorators/api-operations/api-delete-operation.decorator';
 import { ApiAddOperation } from '../decorators/api-operations/api-create-operation.decorator';
 import { ApiGetSingleOperation } from '../decorators/api-operations/api-get-single-operation.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
-// @ApiBearerAuth()
+@ApiBearerAuth('access-token')
 @Controller('artist')
 @UseInterceptors(ClassSerializerInterceptor)
 export class ArtistController {
-  constructor(private artistService: ArtistService) {
-  }
+  constructor(private artistService: ArtistService) {}
 
   @ApiGetAllOperation('Artists')
   @Get()

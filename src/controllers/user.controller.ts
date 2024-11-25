@@ -20,10 +20,11 @@ import { ApiAddOperation } from '../decorators/api-operations/api-create-operati
 import { ApiDeleteOperation } from '../decorators/api-operations/api-delete-operation.decorator';
 import { ApiUpdateOperation } from '../decorators/api-operations/api-update-operation.decorator';
 import { ApiGetAllOperation } from '../decorators/api-operations/api-get-all-response.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('user')
 @UseInterceptors(ClassSerializerInterceptor)
-// @ApiBearerAuth('access-token')
+@ApiBearerAuth('access-token')
 export class UserController {
   constructor(private userService: UserService) {}
 

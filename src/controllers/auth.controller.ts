@@ -16,7 +16,6 @@ import {
 import { ApiLoginOperationDecorator } from '../decorators/api-operations/api-login-operation.decorator';
 import { TokensDto } from '../dto/tokens.dto';
 import { ApiRefreshTokensOperationDecorator } from '../decorators/api-operations/api-refresh-tokens-operation.decorator';
-import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -31,13 +30,13 @@ export class AuthController {
   }
 
   @PublicHandler()
-  @ApiLoginOperationDecorator(['auth'])
+  @ApiLoginOperationDecorator()
   @Post('login')
   async login(@Body() authUserDto: AuthUserDto): Promise<TokensDto> {
     return await this.authService.login(authUserDto);
   }
 
-  @ApiRefreshTokensOperationDecorator(['auth'])
+  @ApiRefreshTokensOperationDecorator()
   @Post('refresh')
   async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<TokensDto> {
     return await this.authService.refresh(refreshTokenDto);

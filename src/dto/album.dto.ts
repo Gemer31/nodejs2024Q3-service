@@ -1,8 +1,7 @@
 import { IsNumber, IsString, IsUUID, ValidateIf } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
-import { ApiExtraModels, ApiProperty, ApiSchema } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
-@ApiSchema({ name: 'CreateAlbum' })
 export class CreateAlbumDto {
   @ApiProperty()
   @IsString()
@@ -20,7 +19,6 @@ export class CreateAlbumDto {
 
 export class UpdateAlbumDto extends PartialType(CreateAlbumDto) {}
 
-@ApiSchema({ name: 'Album' })
 export class AlbumDto extends CreateAlbumDto {
   @ApiProperty()
   @IsUUID()
